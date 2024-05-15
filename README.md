@@ -32,3 +32,5 @@ Longer story is in my Digital Garden [here](https://mikhailspirin.github.io/khak
 ![Bottom](/photo/30.jpg "Bottom")
 
 ### Video of the workflow
+
+[![Quatrosync](https://img.youtube.com/vi/wyarnVKuoUg/0.jpg)](https://www.youtube.com/watch?v=wyarnVKuoUg)
