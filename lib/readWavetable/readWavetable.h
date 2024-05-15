@@ -38,13 +38,13 @@ void readWT(String filename, int where)
 void initWaveTables()
 {
   readWT("/AKWF_0001/AKWF_0001.wav", 0);
-  readWT("/AKWF_0001/AKWF_0002.wav", 1);
-  readWT("/AKWF_0001/AKWF_0003.wav", 2);
-  readWT("/AKWF_0001/AKWF_0049.wav", 3);
-  readWT("/AKWF_0001/AKWF_0025.wav", 4);
-  readWT("/AKWF_0001/AKWF_0084.wav", 5);
-  readWT("/AKWF_0001/AKWF_0073.wav", 6);
+  readWT("/AKWF_0002/AKWF_0116.wav", 1);
+  readWT("/AKWF_0002/AKWF_0149.wav", 2);
+  readWT("/AKWF_0002/AKWF_0147.wav", 3);
+  readWT("/AKWF_0002/AKWF_0172.wav", 4);
+  readWT("/AKWF_0002/AKWF_0159.wav", 5);
+  readWT("/AKWF_0001/AKWF_0038.wav", 6);
   readWT("/AKWF_0001/AKWF_0026.wav", 7);
-  readWT("/AKWF_0001/AKWF_0026.wav", 8);
-  readWT("/AKWF_0001/AKWF_0010.wav", 9);
+  readWT("/AKWF_0001/AKWF_0023.wav", 8);
+  readWT("/AKWF_0001/AKWF_0048.wav", 9);
 }

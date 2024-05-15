@@ -18,10 +18,11 @@
 #define POT_PIN A0
 #define TRIG_IN_PIN D7
 #define BLUE_LED_PIN D6
+const byte DEFAULT_UPDATE_DAC = 4;
 const byte PATTERNS[8][8] = {
     {0, 1, 0, 1, 0, 1, 0, 1},
-    {0, 0, 0, 1, 0, 0, 0, 1},
-    {0, 0, 1, 1, 1, 0, 0, 1},
+    {0, 2, 0, 1, 0, 2, 0, 1},
+    {0, 0, 1, 2, 1, 0, 0, 1},
     {0, 1, 2, 0, 1, 2, 0, 1},
     {0, 1, 2, 0, 2, 1, 2, 1},
     {0, 2, 1, 0, 0, 2, 1, 2},
@@ -37,7 +38,7 @@ Ticker pot_poll_ticker;
 RunningMedian trig_ins = RunningMedian(3);
 long current_time = 0, previous_time = 0;
 uint16_t current_cycle_time = 1200;
-uint16_t samples_position = 0;
+uint16_t samples_position = 0, slow_samples_position = 0;
 uint32_t perlin_position_x = 0, perlin_position_y = 0;
 uint16_t out_a, out_b, out_c, out_d;
 uint16_t pot_pos = 0;
@@ -122,27 +123,27 @@ void updateDac()
     led_on = !led_on;
     digitalWrite(BLUE_LED_PIN, led_on);
   }
-  out_a = getout_a(samples[samples_position % 600][0],
-                 samples[samples_position % 600][1],
+  out_a = getout_a(samples[samples_position][0],
+                 samples[samples_position][1],
                  1);
   // DEBUG_PRINTLN(out_a);
-  out_b = getout_b(samples[samples_position % 600][2],
-                 samples[samples_position % 600][3],
+  out_b = getout_b(samples[samples_position][2],
+                 samples[samples_position][3],
                  1 << 8);
   // DEBUG_PRINT(out_b);
   
-  out_c = getout_c(samples[samples_position % 600][4],
-                 samples[samples_position % 600][5],
-                 samples[samples_position % 600][6]);
+  out_c = getout_c(samples[samples_position][4],
+                 samples[samples_position][5],
+                 samples[samples_position][6]);
 
   // DEBUG_PRINTLN(out_c);
-  out_d = getout_d(samples[(samples_position % 1200) >> 1][7],
-                 samples[samples_position % 600][8],
-                 samples[samples_position >> 2][9]);
+  out_d = getout_d(samples[samples_position][7],
+                 samples[slow_samples_position][8],
+                 samples[samples_position][9]);
   // DEBUG_PRINTLN(out_d);
 
 
-  if (samples_position == (600 * 4 - 1))
+  if (samples_position == 599)
   {
     led_on = !led_on;
     digitalWrite(BLUE_LED_PIN, led_on);
@@ -153,9 +154,22 @@ void updateDac()
   {
     samples_position++;
   }
+
+  if (slow_samples_position == 599)
+  {
+    slow_samples_position = 0;
+  }
+  else if (samples_position % 4 == 1)
+  {
+    slow_samples_position++;
+  }
+
   perlin_position_x += (1 << 4);
 
-  dac.analogWrite(out_a, out_b, out_c, out_d);
+
+  // on my module i messed with lables, so this is where i'm fixing the difference.
+  // obviously, channels on dac are a, b, c, d, but my order is different
+  dac.analogWrite(out_d, out_c, out_a, out_b);
 }
 
 void updateBPM()
@@ -202,7 +216,7 @@ void setup()
 
   attachInterrupt(digitalPinToInterrupt(TRIG_IN_PIN), trigInHandler, RISING);
 
-  main_loop_ticker.attach_ms(4, updateDac);
+  main_loop_ticker.attach_ms(DEFAULT_UPDATE_DAC, updateDac);
   pot_poll_ticker.attach_ms(50, updatepot_pos);
   update_bpm_ticker.attach_ms(500, updateBPM);
 }
